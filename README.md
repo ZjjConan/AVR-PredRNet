@@ -24,7 +24,7 @@ RPM Problem Setting
 The goal of each RPM is to choose the correct one (highlighted in red) from eight answer images to fill in the missing one (denoted by ?), making three rows or three columns with similar patterns. Obviously, a subject should recognize diverse visual objects, and then discover abstract relationships among these objects for inference.
 
 <p align="center">
-<img src="figures/init_rpm.png" width=400 height=330>
+<img src="figures/init_rpm.png" width=460 height=370>
 </p>
 
 
@@ -34,7 +34,7 @@ Our PredRNet
 The structure of our PredRNet is shown in above. It consists of three components: (1) an **Image Encoder** to transform each image into a 3-dimensional high-level representation (features), (2) multiple (K ≥ 2) stacked **Predictive Reasoning Block (PRB)** to extract relationships between the representations of context and answer images, and (3) a **Classifier** to output the scores for 8 answer images. In each RPM, the answer image with the highest score is selected as the final answer.
 
 <p align="center">
-<img src="figures/predrnet.png" width=500 height=260>
+<img src="figures/predrnet.png" width=600 height=320>
 </p>
 
 
@@ -48,7 +48,8 @@ Please prepare datasets with following structure:
 
 
 ```markdown
-    your_dataset_root_dir/
+your_dataset_root_dir/
+
     ├─I-RAVEN (RAVEN or RAVEN-FAIR)
     │  ├─center_single
     │  ├─distribute_four
@@ -95,8 +96,9 @@ python main.py --dataset-name I-RAVEN --dataset-dir your_dataset_root_dir --gpu 
 # using "--show-detail" to present detailed results for each configuration on RAVENs
 ```
 
-### Results on RAVEN (RVN-O), Impartial-RAVEN (I-RAVEN), RAVEN-FAIR (RAVEN-F) and PGM-Neural (PGM-N)
+#### Results on RAVEN (RVN-O), Impartial-RAVEN (I-RAVEN), RAVEN-FAIR (RAVEN-F) and PGM-Neural (PGM-N)
 
+<small>
 
 | Method | WReN | LEN  |CoPINet | SRAN | DCNet | MLRN | SCL  | MXNet | Rel-Base | MRNet |STSN  | PredRNet |
 |:---:   |:---: |:---: |:---:   |:---: |:---:  |:---: |:---: |:---:  |:---:     |:---:  |:---: |:---:     |
@@ -106,21 +108,26 @@ python main.py --dataset-name I-RAVEN --dataset-dir your_dataset_root_dir --gpu 
 | I-RVN  | 23.8 | 41.4 | 46.1   | 60.8 | 47.2  | 12.3 | 95.0 | 26.8  | 91.1     | 83.5  | 95.7 | 96.5     |
 | Avg    | 33.4 | 58.4 | 61.1   | 64.8 | 66.4  | 38.0 | 91.4 | 53.1  | 90.5     | 90.8  | 94.8 | 96.7     |
 
+</small>
 
-### Results on All Sub-datasets of PGM
+#### Results on All Sub-datasets of PGM
 
 **Ntr**: Neutral, **Int**: Interpolation, **Ext**: Extrapolation, **H.O**: Held-Out, **P**: Pairs, **TP**: TriplePairs, **LT**: LineType, **SC**: ShapeColor
 
-Method | Ntr  | Int  | Ext  | H.O.P | H.O.TP | H.O.T | H.O.LT | H.O.SC | Avg  |
-|:---: |:---: |:---: |:---: |:---:  |:---:   |:---:  |:---:   |:---:   |:---: |
-| WReN | 62.6 | 64.4 | 17.2 | 27.2  | 41.9   | 19.0  | 14.4   | 12.5   | 32.4 |
-| MXGNet | 66.7 | 65.4 | 18.9 | 33.6 | 43.3 | 19.9 | 16.7 | 16.6 | 35.1 |
-| MRNet | 93.4 | 68.1 | 19.2 | 38.4 | 55.3 | 25.9 | 30.1 | 16.9 | 43.4 | 
+<small>
+
+|Method    | Ntr  | Int  | Ext  | H.O.P | H.O.TP | H.O.T | H.O.LT | H.O.SC | Avg  |
+|:---:     |:---: |:---: |:---: |:---:  |:---:   |:---:  |:---:   |:---:   |:---: |
+| WReN     | 62.6 | 64.4 | 17.2 | 27.2  | 41.9   | 19.0  | 14.4   | 12.5   | 32.4 |
+| MXGNet   | 66.7 | 65.4 | 18.9 | 33.6 | 43.3 | 19.9 | 16.7 | 16.6 | 35.1 |
+| MRNet    | 93.4 | 68.1 | 19.2 | 38.4 | 55.3 | 25.9 | 30.1 | 16.9 | 43.4 | 
 | PredRNet | 97.4 | 70.5 | 19.7 | 63.4 | 67.8 | 23.4 | 27.3 | 13.1 | 47.1 |
+
+</small>
 
 --------------------------------------------------------------------
 
-### More detailed results on different datasets and ablation studies can be found in our ICML paper.
+#### More detailed results can be found in our ICML paper.
 
 Citation
 --------
