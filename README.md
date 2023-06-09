@@ -24,7 +24,7 @@ RPM Problem Setting
 The goal of each RPM is to choose the correct one (highlighted in red) from eight answer images to fill in the missing one (denoted by ?), making three rows or three columns with similar patterns. Obviously, a subject should recognize diverse visual objects, and then discover abstract relationships among these objects for inference.
 
 <p align="center">
-<img src="figures/init_rpm.png" width=460 height=370>
+<img src="figures/init_rpm.png" width=460 height=390>
 </p>
 
 
@@ -34,7 +34,7 @@ Our PredRNet
 The structure of our PredRNet is shown in above. It consists of three components: (1) an **Image Encoder** to transform each image into a 3-dimensional high-level representation (features), (2) multiple (K ≥ 2) stacked **Predictive Reasoning Block (PRB)** to extract relationships between the representations of context and answer images, and (3) a **Classifier** to output the scores for 8 answer images. In each RPM, the answer image with the highest score is selected as the final answer.
 
 <p align="center">
-<img src="figures/predrnet.png" width=600 height=320>
+<img src="figures/predrnet.png" width=640 height=330>
 </p>
 
 
