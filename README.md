@@ -67,6 +67,7 @@ your_dataset_root_dir/
     │  └─interpolation
     |  └─extrapolation
     |  └─novel.domain.transfer
+    |  └─... (other sub-datasets)
     ├─CLEVR-Matrix
     │  ├─problem1
     │  ├─problem2
@@ -96,6 +97,9 @@ python main.py --dataset-name I-RAVEN --dataset-dir your_dataset_root_dir --gpu 
 # using "--show-detail" to present detailed results for each configuration on RAVENs
 ```
 
+More running commands can be found in "script_train_predrnet.sh" and "script_eval_predrnet.sh" scripts.
+
+
 #### Results on RAVEN (RVN-O), Impartial-RAVEN (I-RAVEN), RAVEN-FAIR (RAVEN-F) and PGM-Neural (PGM-N)
 
 <small>
@@ -121,7 +125,7 @@ python main.py --dataset-name I-RAVEN --dataset-dir your_dataset_root_dir --gpu 
 | WReN     | 62.6 | 64.4 | 17.2 | 27.2  | 41.9   | 19.0  | 14.4   | 12.5   | 32.4 |
 | MXGNet   | 66.7 | 65.4 | 18.9 | 33.6 | 43.3 | 19.9 | 16.7 | 16.6 | 35.1 |
 | MRNet    | 93.4 | 68.1 | 19.2 | 38.4 | 55.3 | **25.9** | **30.1** | **16.9** | 43.4 | 
-| PredRNet | **97.4** | **70.5** | **19.7** | **63.4** | **67.8** | 23.4 | 27.3 | 13.1 | **47.1** |
+| **PredRNet** | **97.4** | **70.5** | **19.7** | **63.4** | **67.8** | 23.4 | 27.3 | 13.1 | **47.1** |
 
 </small>
 
