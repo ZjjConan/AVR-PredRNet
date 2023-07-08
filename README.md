@@ -135,7 +135,23 @@ More running commands can be found in "script_train_predrnet.sh" and "script_eva
 
 Citation
 --------
-If you find our **PredRNet** useful in your research, please consider citing (not available now):
+If you find our **PredRNet** useful in your research, please consider citing:
+
+    @InProceedings{PredRNet-Yang23,
+      title = 	 {Neural Prediction Errors enable Analogical Visual Reasoning in Human Standard Intelligence Tests},
+      author =       {Yang, Lingxiao and You, Hongzhi and Zhen, Zonglei and Wang, Dahui and Wan, Xiaohong and Xie, Xiaohua and Zhang, Ru-Yuan},
+      booktitle = 	 {Proceedings of the 40th International Conference on Machine Learning},
+      pages = 	 {39572--39583},
+      year = 	 {2023},
+      editor = 	 {Krause, Andreas and Brunskill, Emma and Cho, Kyunghyun and Engelhardt, Barbara and Sabato, Sivan and Scarlett, Jonathan},
+      volume = 	 {202},
+      series = 	 {Proceedings of Machine Learning Research},
+      month = 	 {23--29 Jul},
+      publisher =    {PMLR},
+      pdf = 	 {https://proceedings.mlr.press/v202/yang23r/yang23r.pdf},
+      url = 	 {https://proceedings.mlr.press/v202/yang23r.html}
+    }
+
 
 
 ## Contact Information
