@@ -44,7 +44,7 @@ Experiments
 
 ### Dataset Structure
 
-Please prepare datasets with following structure:
+Please prepare datasets with the following structure:
 
 
 ```markdown
@@ -100,7 +100,7 @@ python main.py --dataset-name I-RAVEN --dataset-dir your_dataset_root_dir --gpu 
 More running commands can be found in "script_train_predrnet.sh" and "script_eval_predrnet.sh" scripts.
 
 
-#### Results on RAVEN (RVN-O), Impartial-RAVEN (I-RAVEN), RAVEN-FAIR (RAVEN-F) and PGM-Neural (PGM-N)
+#### Results on RAVEN (RVN-O), Impartial-RAVEN (I-RVN), RAVEN-FAIR (RVN-F) and PGM-Neural (PGM-N)
 
 <small>
 
