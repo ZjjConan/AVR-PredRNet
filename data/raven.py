@@ -19,7 +19,7 @@ sub_folders = {'0': "center_single",
 class RAVEN(Dataset):
     def __init__(
         self, dataset_dir, data_split=None, image_size=80, 
-        transform=None, subset=None
+        transform=None, subset="None"
     ):
         self.dataset_dir = dataset_dir
         self.data_split = data_split
