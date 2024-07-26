@@ -10,7 +10,7 @@ class Analogy(Dataset):
 
     def __init__(
             self, dataset_dir, data_split=None, image_size=80, 
-            transform=None, subset=None
+            transform=None, subset="None"
         ):
 
         self.dataset_dir = dataset_dir
