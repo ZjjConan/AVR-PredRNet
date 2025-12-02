@@ -47,7 +47,7 @@ The architecture of PredRNet, illustrated in the figure above, comprises three c
 The core of SSPredRNet is its Sample Construction module, visualized above. AVR problems often contain correct rules within their context images, e.g., the first two rows in a RAVEN problem. Therefore, replacing any context image will largely disrupt these rules, resulting in samples with incorrect rules. Since different tasks have different prior structures, we provide different sample construction methods, from (a) to (c). Features colored in lightgrey are not used during the training phase to avoid including correct rules as negative samples for optimization. Although there are slight differences in the construction methods, our central idea remains the same: disrupting contextual information to generate positive and negative errors for contrastive learning.
 
 
-Code environments and toolkits
+## Code environments and toolkits
 -----------
 
 - OS: Ubuntu 18.04.5
@@ -58,10 +58,9 @@ Code environments and toolkits
 - [thop](https://github.com/Lyken17/pytorch-OpCounter)
 
 
-Experiments
-----------
+### Experiments
 
-### Dataset Structure
+#### Dataset Structure
 
 Please prepare datasets with the following structure:
 
@@ -93,7 +92,7 @@ your_dataset_root_dir/
     │  └─problem3
 ```
 
-### Training and Evaluation
+#### Training and Evaluation
 
 
 ```python
@@ -169,7 +168,7 @@ The new state-of-the-art results reported in our T-PAMI paper are achieved with 
 
 #### For an in-depth comparison of PredRNet and SSPredRNet, including ablation studies and detailed results, please refer to our T-PAMI paper.
 
-Citation
+## Citation
 --------
 If you find this code useful in your research, please consider citing:
 
