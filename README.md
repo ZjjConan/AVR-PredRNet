@@ -5,7 +5,7 @@ This new paper extends our ICML 2023 publication, "Neural Prediction Errors Enab
 
 ## Highlights
 
-> **<p align="justify"> Abstract:** Humans exhibit remarkable abilities in recognizing relationships and performing complex reasoning. In contrast, deep neural networks have long been critiqued for their limitations in abstract visual reasoning (AVR), a key challenge in achieving artificial general intelligence. Drawing on the well-known concept of prediction errors from neuroscience, we propose that prediction errors can serve as a unified mechanism for both supervised and self-supervised learning in AVR. In our novel supervised learning model, AVR is framed as a prediction-and-matching process, where the central component is the discrepancy (*i.e.*, prediction error) between a predicted feature based on abstract rules and candidate features within a reasoning context. In the self-supervised model, prediction errors as a key component unify the learning and inference processes. Both supervised and self-supervised prediction-based models achieve state-of-the-art performance on a broad range of AVR datasets and task conditions. Most notably, hierarchical prediction errors in the supervised model automatically decrease during training, an emergent phenomenon closely resembling the decrease of dopamine signals observed in biological learning. These findings underscore the critical role of prediction errors in AVR and highlight the potential of leveraging neuroscience theories to advance computational models for high-level cognition in artificial intelligence. The code is available at https://github.com/ZjjConan/AVR-PredRNet. </p>
+**<p align="justify"> Abstract:** Humans exhibit remarkable abilities in recognizing relationships and performing complex reasoning. In contrast, deep neural networks have long been critiqued for their limitations in abstract visual reasoning (AVR), a key challenge in achieving artificial general intelligence. Drawing on the well-known concept of prediction errors from neuroscience, we propose that prediction errors can serve as a unified mechanism for both supervised and self-supervised learning in AVR. In our novel supervised learning model, AVR is framed as a prediction-and-matching process, where the central component is the discrepancy (*i.e.*, prediction error) between a predicted feature based on abstract rules and candidate features within a reasoning context. In the self-supervised model, prediction errors as a key component unify the learning and inference processes. Both supervised and self-supervised prediction-based models achieve state-of-the-art performance on a broad range of AVR datasets and task conditions. Most notably, hierarchical prediction errors in the supervised model automatically decrease during training, an emergent phenomenon closely resembling the decrease of dopamine signals observed in biological learning. These findings underscore the critical role of prediction errors in AVR and highlight the potential of leveraging neuroscience theories to advance computational models for high-level cognition in artificial intelligence. The code is available at https://github.com/ZjjConan/AVR-PredRNet. </p>
 
 
 ## Contributions
@@ -23,10 +23,10 @@ self-supervised methods. <p></p>
 ### Problem Setting
 
 <p align="center">
-<img src="figures/init_all_avrs.png" width=640 height=240>
+<img src="figures/init_all_avrs.png" width=720 height=300>
 </p>
 
-> An illustration of two type of AVR problems used in this study from different datasets: the RPM-like problems from (1) the 16-images-based RAVEN-type problems, including RAVEN, PGM and CLEVR-Matrices, and (2) the 9-images-based VAD problems, and the Bongard problems from Bongard-LOGO and Bongard-HOI datasets. In each RPM-like problem as shown in (a) - (d), a few context images are provided. The goal is to choose the correct one (highlighted in red) from the provided choice images to fill in the missing one (denoted by ?), making rows or columns with similar patterns. The Bongard problems in (e) and (f) provide two different sets: one is positive set containing similar patterns, and the other one is negative set with different patterns. Methods should classify which set is belong to for the two provided choice images. Obviously, for all tasks, a subject should recognize diverse visual objects and their attributes, and then discover relationships among these objects for inference.
+An illustration of two type of AVR problems used in this study from different datasets: the RPM-like problems from (1) the 16-images-based RAVEN-type problems, including RAVEN, PGM and CLEVR-Matrices, and (2) the 9-images-based VAD problems, and the Bongard problems from Bongard-LOGO and Bongard-HOI datasets. In each RPM-like problem as shown in (a) - (d), a few context images are provided. The goal is to choose the correct one (highlighted in red) from the provided choice images to fill in the missing one (denoted by ?), making rows or columns with similar patterns. The Bongard problems in (e) and (f) provide two different sets: one is positive set containing similar patterns, and the other one is negative set with different patterns. Methods should classify which set is belong to for the two provided choice images. Obviously, for all tasks, a subject should recognize diverse visual objects and their attributes, and then discover relationships among these objects for inference.
 
 
 ### Our PredRNet
@@ -35,7 +35,7 @@ self-supervised methods. <p></p>
 <img src="figures/predrnet.png" width=620 height=380>
 </p>
 
-> The architecture of PredRNet, illustrated in the figure above, comprises three core components: (1) an **Image Encoder**, which projects each input image into a high-dimensional feature space; (2) a series of K (≥2) stacked **Predictive Reasoning Blocks (PRBs)**, which iteratively model the relational dynamics between context and candidate answer representations; and (3) a **Classifier**, which generates a compatibility score for each of the eight candidate answers. During inference, the model selects the answer with the highest predicted score as the final solution for the given Raven's Progressive Matrix (RPM) problem.
+The architecture of PredRNet, illustrated in the figure above, comprises three core components: (1) an **Image Encoder**, which projects each input image into a high-dimensional feature space; (2) a series of K (≥2) stacked **Predictive Reasoning Blocks (PRBs)**, which iteratively model the relational dynamics between context and candidate answer representations; and (3) a **Classifier**, which generates a compatibility score for each of the eight candidate answers. During inference, the model selects the answer with the highest predicted score as the final solution for the given Raven's Progressive Matrix (RPM) problem.
 
 
 ### Our SSPredRNet
@@ -44,7 +44,7 @@ self-supervised methods. <p></p>
 <img src="figures/sspredrnet.png" width=400 height=350>
 </p>
 
-> The core of SSPredRNet is its Sample Construction module, visualized above. AVR problems often contain correct rules within their context images, e.g., the first two rows in a RAVEN problem. Therefore, replacing any context image will largely disrupt these rules, resulting in samples with incorrect rules. Since different tasks have different prior structures, we provide different sample construction methods, from (a) to (c). Features colored in lightgrey are not used during the training phase to avoid including correct rules as negative samples for optimization. Although there are slight differences in the construction methods, our central idea remains the same: disrupting contextual information to generate positive and negative errors for contrastive learning.
+The core of SSPredRNet is its Sample Construction module, visualized above. AVR problems often contain correct rules within their context images, e.g., the first two rows in a RAVEN problem. Therefore, replacing any context image will largely disrupt these rules, resulting in samples with incorrect rules. Since different tasks have different prior structures, we provide different sample construction methods, from (a) to (c). Features colored in lightgrey are not used during the training phase to avoid including correct rules as negative samples for optimization. Although there are slight differences in the construction methods, our central idea remains the same: disrupting contextual information to generate positive and negative errors for contrastive learning.
 
 
 Code environments and toolkits
@@ -125,12 +125,12 @@ python main.py --dataset-name "dataset_name" --dataset-dir your_dataset_root_dir
 # using "--show-detail" to present detailed results for each configuration on RAVENs
 ```
 
-> More running commands can be found in "script_train.sh" and "script_eval.sh" scripts.
+More running commands can be found in "script_train.sh" and "script_eval.sh" scripts.
 
 
 #### Updated Results on RAVEN (RVN-O), Impartial-RAVEN (I-RVN), RAVEN-FAIR (RVN-F) and PGM-Neural (PGM-N)
 
-> The new state-of-the-art results reported in our T-PAMI paper are achieved with several key hyperparameter refinements, including setting classifier-drop to 0.1 and enabling row- and column-wise relational reasoning (enable-rc) for the PGM datasets. 
+The new state-of-the-art results reported in our T-PAMI paper are achieved with several key hyperparameter refinements, including setting classifier-drop to 0.1 and enabling row- and column-wise relational reasoning (enable-rc) for the PGM datasets. 
 
 
 <small>
