@@ -1,4 +1,4 @@
-## News: Neural Prediction Errors as A Unified Cue for Abstract Visual Reasoning (T-PAMI 2025)
+## Neural Prediction Errors as A Unified Cue for Abstract Visual Reasoning (T-PAMI 2025)
 [**Lingxiao Yang**](https://zjjconan.github.io/), [Xiaohua Xie](http://cse.sysu.edu.cn/content/2478), [Wei-Shi Zheng](https://www.isee-ai.cn/~zhwshi/), [Fang Fnag](https://www.psy.pku.edu.cn/english/people/faculty/professor/fangfang/index.htm), [Ru-Yuan Zhang](https://ruyuanzhang.github.io/)
 
 This new paper extends our ICML 2023 publication, "Neural Prediction Errors Enable Analogical Visual Reasoning in Human Intelligence Tests", offering a broader framework for supervised and self-supervised learning.
@@ -23,7 +23,7 @@ self-supervised methods. <p></p>
 ### Problem Setting
 
 <p align="center">
-<img src="figures/init_all_avrs.png" width=760 height=340>
+<img src="figures/init_all_avrs.png" width=780 height=380>
 </p>
 
 An illustration of two type of AVR problems used in this study from different datasets: the RPM-like problems from (1) the 16-images-based RAVEN-type problems, including RAVEN, PGM and CLEVR-Matrices, and (2) the 9-images-based VAD problems, and the Bongard problems from Bongard-LOGO and Bongard-HOI datasets. In each RPM-like problem as shown in (a) - (d), a few context images are provided. The goal is to choose the correct one (highlighted in red) from the provided choice images to fill in the missing one (denoted by ?), making rows or columns with similar patterns. The Bongard problems in (e) and (f) provide two different sets: one is positive set containing similar patterns, and the other one is negative set with different patterns. Methods should classify which set is belong to for the two provided choice images. Obviously, for all tasks, a subject should recognize diverse visual objects and their attributes, and then discover relationships among these objects for inference.
@@ -41,7 +41,7 @@ The architecture of PredRNet, illustrated in the figure above, comprises three c
 ### Our SSPredRNet
 
 <p align="center">
-<img src="figures/sspredrnet.png" width=400 height=350>
+<img src="figures/sspredrnet.png" width=480 height=380>
 </p>
 
 The core of SSPredRNet is its Sample Construction module, visualized above. AVR problems often contain correct rules within their context images, e.g., the first two rows in a RAVEN problem. Therefore, replacing any context image will largely disrupt these rules, resulting in samples with incorrect rules. Since different tasks have different prior structures, we provide different sample construction methods, from (a) to (c). Features colored in lightgrey are not used during the training phase to avoid including correct rules as negative samples for optimization. Although there are slight differences in the construction methods, our central idea remains the same: disrupting contextual information to generate positive and negative errors for contrastive learning.
