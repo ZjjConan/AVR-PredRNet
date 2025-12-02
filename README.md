@@ -1,4 +1,4 @@
-## Neural Prediction Errors as A Unified Cue for Abstract Visual Reasoning (T-PAMI 2025)
+## [**Neural Prediction Errors as A Unified Cue for Abstract Visual Reasoning (T-PAMI 2025)**](https://ieeexplore.ieee.org/document/11207515)<br>
 [**Lingxiao Yang**](https://zjjconan.github.io/), [Xiaohua Xie](http://cse.sysu.edu.cn/content/2478), [Wei-Shi Zheng](https://www.isee-ai.cn/~zhwshi/), [Fang Fnag](https://www.psy.pku.edu.cn/english/people/faculty/professor/fangfang/index.htm), [Ru-Yuan Zhang](https://ruyuanzhang.github.io/)
 
 This new paper extends our ICML 2023 publication, "Neural Prediction Errors Enable Analogical Visual Reasoning in Human Intelligence Tests", offering a broader framework for supervised and self-supervised learning.
@@ -48,7 +48,6 @@ The core of SSPredRNet is its Sample Construction module, visualized above. AVR 
 
 
 ## Code environments and toolkits
------------
 
 - OS: Ubuntu 18.04.5
 - CUDA: 11.0
@@ -59,7 +58,6 @@ The core of SSPredRNet is its Sample Construction module, visualized above. AVR 
 
 
 ### Experiments
-
 #### Dataset Structure
 
 Please prepare datasets with the following structure:
@@ -93,7 +91,6 @@ your_dataset_root_dir/
 ```
 
 #### Training and Evaluation
-
 
 ```python
 # Example for training supervised PredRNet and self-supervised SSPredRNet models
@@ -171,6 +168,18 @@ The new state-of-the-art results reported in our T-PAMI paper are achieved with 
 ## Citation
 --------
 If you find this code useful in your research, please consider citing:
+    
+    @ARTICLE{PredRNet-TPAMI25,
+      author={Yang, Lingxiao and Xie, Xiaohua and Zheng, Wei-Shi and Fang, Fang and Zhang, Ru-Yuan},
+      journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
+      title={Neural Prediction Errors as A Unified Cue for Abstract Visual Reasoning}, 
+      year={2025},
+      volume={},
+      number={},
+      pages={1-17},
+      keywords={Cognition; Visualization; Predictive models; Biological system modeling; Computational modeling; Training; Neuroscience; Supervised learning; Observers; Brain modeling; Neural Prediction Errors; Analogical Visual Reasoning; Intelligence Tests; RPM-like; Bongard Problem},
+      doi={10.1109/TPAMI.2025.3623461}
+    }
 
     @InProceedings{PredRNet-ICML23,
       title = 	 {Neural Prediction Errors enable Analogical Visual Reasoning in Human Standard Intelligence Tests},
@@ -186,20 +195,6 @@ If you find this code useful in your research, please consider citing:
       pdf = 	 {https://proceedings.mlr.press/v202/yang23r/yang23r.pdf},
       url = 	 {https://proceedings.mlr.press/v202/yang23r.html}
     }
-
-
-    @ARTICLE{PredRNet-TPAMI25,
-      author={Yang, Lingxiao and Xie, Xiaohua and Zheng, Wei-Shi and Fang, Fang and Zhang, Ru-Yuan},
-      journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
-      title={Neural Prediction Errors as A Unified Cue for Abstract Visual Reasoning}, 
-      year={2025},
-      volume={},
-      number={},
-      pages={1-17},
-      keywords={Cognition; Visualization; Predictive models; Biological system modeling; Computational modeling; Training; Neuroscience; Supervised learning; Observers; Brain modeling; Neural Prediction Errors; Analogical Visual Reasoning; Intelligence Tests; RPM-like; Bongard Problem},
-      doi={10.1109/TPAMI.2025.3623461}
-    }
-
 
 ## Contact Information
 
