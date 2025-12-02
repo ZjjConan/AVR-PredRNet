@@ -125,12 +125,12 @@ python main.py --dataset-name "dataset_name" --dataset-dir your_dataset_root_dir
 # using "--show-detail" to present detailed results for each configuration on RAVENs
 ```
 
-More running commands can be found in "script_train.sh" and "script_eval.sh" scripts.
+> More running commands can be found in "script_train.sh" and "script_eval.sh" scripts.
 
 
 #### Updated Results on RAVEN (RVN-O), Impartial-RAVEN (I-RVN), RAVEN-FAIR (RVN-F) and PGM-Neural (PGM-N)
 
-The new state-of-the-art results reported in our T-PAMI paper are achieved with several key hyperparameter refinements, including setting classifier-drop to 0.1 and enabling row- and column-wise relational reasoning (enable-rc) for the PGM datasets. 
+> The new state-of-the-art results reported in our T-PAMI paper are achieved with several key hyperparameter refinements, including setting classifier-drop to 0.1 and enabling row- and column-wise relational reasoning (enable-rc) for the PGM datasets. 
 
 
 <small>
