@@ -23,7 +23,7 @@ self-supervised methods. <p></p>
 ### Problem Setting
 
 <p align="center">
-<img src="figures/init_all_avrs.png" width=720 height=300>
+<img src="figures/init_all_avrs.png" width=760 height=340>
 </p>
 
 An illustration of two type of AVR problems used in this study from different datasets: the RPM-like problems from (1) the 16-images-based RAVEN-type problems, including RAVEN, PGM and CLEVR-Matrices, and (2) the 9-images-based VAD problems, and the Bongard problems from Bongard-LOGO and Bongard-HOI datasets. In each RPM-like problem as shown in (a) - (d), a few context images are provided. The goal is to choose the correct one (highlighted in red) from the provided choice images to fill in the missing one (denoted by ?), making rows or columns with similar patterns. The Bongard problems in (e) and (f) provide two different sets: one is positive set containing similar patterns, and the other one is negative set with different patterns. Methods should classify which set is belong to for the two provided choice images. Obviously, for all tasks, a subject should recognize diverse visual objects and their attributes, and then discover relationships among these objects for inference.
@@ -128,7 +128,7 @@ python main.py --dataset-name "dataset_name" --dataset-dir your_dataset_root_dir
 More running commands can be found in "script_train.sh" and "script_eval.sh" scripts.
 
 
-#### Updated Results on RAVEN (RVN-O), Impartial-RAVEN (I-RVN), RAVEN-FAIR (RVN-F) and PGM-Neural (PGM-N)
+#### Updated results on RAVEN (RVN-O), Impartial-RAVEN (I-RVN), RAVEN-FAIR (RVN-F) and PGM-Neural (PGM-N)
 
 The new state-of-the-art results reported in our T-PAMI paper are achieved with several key hyperparameter refinements, including setting classifier-drop to 0.1 and enabling row- and column-wise relational reasoning (enable-rc) for the PGM datasets. 
 
@@ -147,7 +147,7 @@ The new state-of-the-art results reported in our T-PAMI paper are achieved with 
 
 </small>
 
-#### Results on All Sub-datasets of PGM
+#### Updated results on all sub-datasets of PGM
 
 **Ntr**: Neutral, **Int**: Interpolation, **Ext**: Extrapolation, **H.O**: Held-Out, **P**: Pairs, **TP**: TriplePairs, **LT**: LineType, **SC**: ShapeColor
 
