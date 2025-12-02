@@ -10,8 +10,8 @@ from torch.utils.data import Dataset
 class PGM(Dataset):
 
     def __init__(
-        self, dataset_dir, data_split=None, image_size=80, 
-        transform=None, subset="None"
+        self, dataset_dir, data_split=None, 
+        image_size=80, transform=None, subset="None"
     ):
         self.dataset_dir = dataset_dir
         self.data_split = data_split
@@ -37,9 +37,12 @@ class PGM(Dataset):
  
         data_path = os.path.join(self.dataset_dir, data_file)
         data = np.load(data_path)
-
-        image = data["image"].reshape(16, 160, 160)
-        if self.image_size != 160:
+        
+        if data["image"].shape[0] != 16:
+            image = data["image"].reshape(16, 160, 160)
+        else:
+            image = data["image"]
+        if self.image_size != 160 and image.shape[1] != self.image_size:
             resize_image = np.zeros((16, self.image_size, self.image_size))
             for idx in range(0, 16):
                 resize_image[idx] = cv2.resize(
@@ -53,7 +56,6 @@ class PGM(Dataset):
 
     def __getitem__(self, idx):
         image, data, data_file = self._get_data(idx)
-
         # Get additional data
         target = data["target"]
         meta_target = data["meta_target"]

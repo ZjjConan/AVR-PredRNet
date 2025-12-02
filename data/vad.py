@@ -6,11 +6,11 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-class Analogy(Dataset):
+class VAD(Dataset):
 
     def __init__(
-            self, dataset_dir, data_split=None, image_size=80, 
-            transform=None, subset="None"
+            self, dataset_dir, data_split=None, 
+            image_size=80, transform=None, subset="None"
         ):
 
         self.dataset_dir = dataset_dir
@@ -32,7 +32,10 @@ class Analogy(Dataset):
         data_path = os.path.join(self.dataset_dir, data_file)
         data = np.load(data_path, allow_pickle=True)
 
-        image = data["image"].reshape(9, 160, 160)
+        if data["image"].shape[0] != 16:
+            image = data["image"].reshape(16, 160, 160)
+        else:
+            image = data["image"]
         if self.image_size != 160:
             resize_image = np.zeros((9, self.image_size, self.image_size))
             for idx in range(0, 9):

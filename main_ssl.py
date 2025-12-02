@@ -15,10 +15,11 @@ import torchvision.transforms as transforms
 
 from utils import AverageMeter, ProgressMeter, ToTensor, accuracy, normalize_image, parse_gpus
 from report_acc_regime import init_acc_regime, update_acc_regime
-from loss import BinaryCrossEntropy
+from loss import BinaryCrossEntropy, ContrastiveLoss
 from checkpoint import save_checkpoint, load_checkpoint
 from thop import profile
 from networks import create_net
+
 
 parser = argparse.ArgumentParser(description='PredRNet: Neural Prediction Errors for Abstract Visual Reasoning')
 
@@ -87,6 +88,11 @@ parser.add_argument('--subset', default='None', type=str,
                     help='subset selection for dataset')
 
 
+# Contrastive Loss
+parser.add_argument('--c-margin', default=1.0, type=float,
+                    help='margin for contrastive loss')
+
+
 # seed the sampling process for reproducibility
 # https://pytorch.org/docs/stable/notes/randomness.html
 def seed_worker(worker_id):
@@ -101,8 +107,8 @@ def get_data_loader(args, data_split = 'train', transform = None, subset = None)
         from data import RAVEN as create_dataset
     elif 'PGM' in args.dataset_name:
         from data import PGM as create_dataset
-    elif 'Analogy' in args.dataset_name:
-        from data import Analogy as create_dataset
+    elif 'VAD' in args.dataset_name:
+        from data import VAD as create_dataset
     elif 'CLEVR-Matrix' in args.dataset_name:
         from data import CLEVR_MATRIX as create_dataset
     elif 'new_split' in args.dataset_name:
@@ -218,7 +224,7 @@ def main_worker(args):
     args.log_file.write("Network - " + args.arch + "\n")
     args.log_file.write("Params - %.6fM" % (params / 1e6) + "\n")
     args.log_file.write("FLOPs - %.6fG" % (flops / 1e9) + "\n")
-
+    
     if args.evaluate == False:
         print(model)
 
@@ -230,7 +236,8 @@ def main_worker(args):
         model = torch.nn.DataParallel(model, args.gpu) 
 
     # define loss function (criterion) and optimizer
-    criterion = BinaryCrossEntropy().cuda(args.gpu)
+    bce_loss = BinaryCrossEntropy().cuda(args.gpu)
+    ctr_loss = ContrastiveLoss(margin=args.c_margin).cuda(args.gpu)
     optimizer = torch.optim.Adam(model.parameters(), lr = args.lr, weight_decay = args.weight_decay)
 
     if args.resume:
@@ -239,7 +246,7 @@ def main_worker(args):
 
     # Data loading code
     tr_transform = transforms.Compose([
-        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomHorizontalFlip(p=0.5), 
         ToTensor()
     ])
     ts_transform = transforms.Compose([
@@ -257,9 +264,8 @@ def main_worker(args):
     args.log_file.write("--------------------------------------------------\n")
     args.log_file.close()
 
-
     if args.evaluate:
-        acc = validate(ts_loader, model, criterion, args, valid_set="Test")
+        acc = validate(ts_loader, model, bce_loss, ctr_loss, args, valid_set="Test")
         return
 
     if args.fp16:
@@ -267,24 +273,20 @@ def main_worker(args):
 
     cont_epoch = 0
     best_epoch = 0
-    test_acc2  = 0
-    
+
     for epoch in range(args.start_epoch, args.epochs):
         
         args.log_file = open(log_path, mode="a")
 
         # train for one epoch
-        train(tr_loader, model, criterion, optimizer, epoch, args)
+        train(tr_loader, model, bce_loss, ctr_loss, optimizer, epoch, args)
 
         # evaluate on validation set
-        acc1 = validate(vl_loader, model, criterion, args, valid_set="Valid")
+        acc1 = validate(ts_loader, model, bce_loss, ctr_loss, args, valid_set="Test")
 
         # remember best acc@1 and save checkpoint
         is_best = acc1 > best_acc1
         best_acc1 = max(acc1, best_acc1)
-
-        if is_best:
-            acc2 = validate(ts_loader, model, criterion, args, valid_set="Test")
 
         save_checkpoint({
             "epoch": epoch + 1,
@@ -297,12 +299,11 @@ def main_worker(args):
         if is_best:
             cont_epoch = 0
             best_epoch = epoch
-            test_acc2 = acc2
         else:
             cont_epoch += 1
 
-        epoch_msg = ("----------- Best Acc at [{}]: Valid {:.3f} Test {:.3f} Continuous Epoch {} -----------".format(
-            best_epoch, best_acc1, test_acc2, cont_epoch)
+        epoch_msg = ("----------- Best Acc at [{}]: Test {:.3f} Continuous Epoch {} -----------".format(
+            best_epoch, best_acc1, cont_epoch)
         )
         print(epoch_msg)
 
@@ -310,15 +311,14 @@ def main_worker(args):
         args.log_file.close()
 
 
-def train(data_loader, model, criterion, optimizer, epoch, args):
-    batch_time = AverageMeter('Time', ':6.3f')
-    data_time = AverageMeter('Data', ':6.3f')
-    losses = AverageMeter('Loss', ':.4e')
-    top1 = AverageMeter('Acc', ':6.2f')
+def train(data_loader, model, bce_loss, ctr_loss, optimizer, epoch, args):
+    batch_time = AverageMeter('Time', ':4.3f')
+    data_time = AverageMeter('Data', ':4.3f')
+    losses = AverageMeter('loss', ':4.3f')
 
     progress = ProgressMeter(
         len(data_loader),
-        [batch_time, data_time, losses, top1],
+        [batch_time, data_time, losses],
         prefix = "Epoch: [{}]".format(epoch))
 
     param_groups = optimizer.param_groups[0]
@@ -328,7 +328,7 @@ def train(data_loader, model, criterion, optimizer, epoch, args):
     model.train()
 
     end = time.time()
-    for i, (images, target, meta_target, structure_encoded, data_file) in enumerate(data_loader):
+    for i, (images, _, meta_target, structure_encoded, data_file) in enumerate(data_loader):
         # measure data loading time
         data_time.update(time.time() - end)
 
@@ -336,32 +336,27 @@ def train(data_loader, model, criterion, optimizer, epoch, args):
 
         if args.gpu is not None:
             images = images.to(args.device, non_blocking=True)
-        if torch.cuda.is_available():
-            target = target.to(args.device, non_blocking=True)
 
         images = normalize_image(images)
 
         # compute output
         if args.fp16:
             with torch.cuda.amp.autocast():
-                output = model(images)
-
-            loss = criterion(output, target)
-                
+                output, target = model(images)
+            ctrs = [ctr_loss(oe, target) for oe in output]
+            loss = sum(ctrs) / len(ctrs)
             args.scaler.scale(loss).backward()
             args.scaler.step(optimizer)
             args.scaler.update()
         else:
-            output = model(images)
-            loss = criterion(output, target)
-            # compute gradient and do SGD step
+            output, target = model(images)
+            ctrs = [ctr_loss(oe, target) for oe in output]
+            loss = sum(ctrs) / len(ctrs)
             loss.backward()
             optimizer.step()
 
         # measure accuracy and record loss
-        acc1 = accuracy(output, target)
         losses.update(loss.item(), images.size(0))
-        top1.update(acc1[0][0], images.size(0))
 
         # measure elapsed time
         batch_time.update(time.time() - end)
@@ -375,16 +370,16 @@ def train(data_loader, model, criterion, optimizer, epoch, args):
             args.log_file.write(epoch_msg + "\n")
 
 
-def validate(data_loader, model, criterion, args, valid_set='Valid'):
+def validate(data_loader, model, bce_loss, ctr_loss, args, valid_set='Valid'):
     
     if 'RAVEN' in args.dataset_name:
         acc_regime = init_acc_regime(args.dataset_name)
     else:
         acc_regime = None
 
-    batch_time = AverageMeter('Time', ':6.3f')
-    losses = AverageMeter('Loss', ':.4e')
-    top1 = AverageMeter('Acc', ':6.2f')
+    batch_time = AverageMeter('Time', ':4.3f')
+    losses = AverageMeter('loss', ':4.3f')
+    top1 = AverageMeter('Acc', ':4.2f')
     
     progress = ProgressMeter(
         len(data_loader),
@@ -406,18 +401,17 @@ def validate(data_loader, model, criterion, args, valid_set='Valid'):
             images = normalize_image(images)
 
             # compute outputs
-            output = model(images)
-            
-            loss = criterion(output, target)
-            losses.update(loss.item(), images.size(0))
+            output = model(images)[-1]
+            ctrs = ctr_loss(output, target)
+            losses.update(ctrs.item(), images.size(0))
 
             # measure accuracy and record loss
-            acc1 = accuracy(output, target)
+            acc1 = accuracy(-output, target)
             
             top1.update(acc1[0][0], images.size(0))
 
             if acc_regime is not None:
-                update_acc_regime(args.dataset_name, acc_regime, output, target, structure_encoded, data_file)
+                update_acc_regime(args.dataset_name, acc_regime, -output, target, structure_encoded, data_file)
 
             # measure elapsed time
             batch_time.update(time.time() - end)

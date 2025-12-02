@@ -3,30 +3,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .network_utils import (
-    Classifier, 
-    ResBlock, 
-    ConvNormAct, 
-    convert_to_rpm_matrix_v9,
-    convert_to_rpm_matrix_v6
-)
-
+from .network_utils import Classifier, ResBlock, ConvNormAct, convert_to_rpm_matrix_v9, convert_to_rpm_matrix_v6
 
 class PredictiveReasoningBlock(nn.Module):
 
-    def __init__(
-        self, 
-        in_planes, 
-        ou_planes, 
-        downsample, 
-        stride = 1, 
-        dropout = 0.0, 
-        num_contexts = 8
-    ):
+    def __init__(self, in_planes, ou_planes, downsample, stride=1, dropout=0.0, num_contexts=8):
 
         super().__init__()
-
-        self.stride = stride
 
         md_planes = ou_planes*4
         self.pconv = ConvNormAct(in_planes, in_planes, (num_contexts, 1))
@@ -57,7 +40,7 @@ class PredRNet(nn.Module):
     def __init__(self, num_filters=32, block_drop=0.0, classifier_drop=0.0, 
                  classifier_hidreduce=1.0, in_channels=1, num_classes=8, 
                  num_extra_stages=1, reasoning_block=PredictiveReasoningBlock,
-                 num_contexts=8):
+                 num_contexts=8, enable_rc=False):
 
         super().__init__()
 
@@ -66,7 +49,6 @@ class PredRNet(nn.Module):
 
         # -------------------------------------------------------------------
         # frame encoder 
-
         self.in_planes = in_channels
 
         for l in range(len(strides)):
@@ -79,7 +61,6 @@ class PredRNet(nn.Module):
             )
         # -------------------------------------------------------------------
 
-        
 
         # -------------------------------------------------------------------
         # predictive coding 
@@ -108,11 +89,9 @@ class PredRNet(nn.Module):
             hidreduce = classifier_hidreduce
         )
 
-
-        
         self.in_channels = in_channels
         self.ou_channels = num_classes
-
+        self.enable_rc = enable_rc
 
     def _make_layer(self, planes, stride, dropout, block, downsample=True):
         if downsample and block == ResBlock:
@@ -134,9 +113,8 @@ class PredRNet(nn.Module):
         self.in_planes = planes
 
         return stage
-
-    def forward(self, x):
-
+    
+    def extract_features(self, x):
         if self.in_channels == 1:
             b, n, h, w = x.size()
             x = x.reshape(b*n, 1, h, w)
@@ -148,33 +126,54 @@ class PredRNet(nn.Module):
             x = getattr(self, "res"+str(l))(x)
 
         x = self.channel_reducer(x)
-
-        _, c, h, w = x.size()
-
+        l = x.size(2)*x.size(3)
+        return x.reshape(b, n, -1, l)
+    
+    def extract_relations(self, img_featrs):
+        b, n, c, l = img_featrs.size()
         if self.num_contexts == 8:
-            x = convert_to_rpm_matrix_v9(x, b, h, w)
+            x = convert_to_rpm_matrix_v9(img_featrs, b, l, 1)
         else:
-            x = convert_to_rpm_matrix_v6(x, b, h, w)
+            x = convert_to_rpm_matrix_v6(img_featrs, b, l, 1)
         
-        x = x.reshape(b * self.ou_channels, self.num_contexts + 1, -1, h * w)
+        x = x.reshape(b * self.ou_channels, self.num_contexts + 1, -1, l)
         # e.g. [b,9,c,l] -> [b,c,9,l] (l=h*w)
         x = x.permute(0,2,1,3)
 
         for l in range(0, self.num_extra_stages): 
             x = getattr(self, "prb"+str(l))(x)
-  
-        x = x.reshape(b, self.ou_channels, -1)
-        x = F.adaptive_avg_pool1d(x, self.featr_dims)    
-        x = x.reshape(b * self.ou_channels, self.featr_dims)
+        return x
 
-        out = self.classifier(x)
+    def forward(self, x):
 
-        return out.view(b, self.ou_channels)
+        batches = x.size(0)
+
+        img_featrs = self.extract_features(x)
+
+        # normal row-wise relationships
+        relations = self.extract_relations(img_featrs)     
+        relations = relations.reshape(batches, self.ou_channels, -1)
+        relations = F.adaptive_avg_pool1d(relations, self.featr_dims)    
+        relations = relations.reshape(batches * self.ou_channels, self.featr_dims)
+
+        scores = self.classifier(relations)
+
+        if self.enable_rc and self.num_contexts == 8:
+            col_featrs = img_featrs.clone()
+            col_featrs[:,:8] = img_featrs[:,[0,3,6,1,4,7,2,5]]
+            relations = self.extract_relations(col_featrs)
+            relations = relations.reshape(batches, self.ou_channels, -1)
+            relations = F.adaptive_avg_pool1d(relations, self.featr_dims)    
+            relations = relations.reshape(batches * self.ou_channels, self.featr_dims)
+
+            scores = scores + self.classifier(relations)
+
+        return scores.view(batches, self.ou_channels)
     
 
 def predrnet_raven(**kwargs):
     return PredRNet(**kwargs, num_contexts=8)
 
 
-def predrnet_analogy(**kwargs):
+def predrnet_vad(**kwargs):
     return PredRNet(**kwargs, num_contexts=5, num_classes=4)

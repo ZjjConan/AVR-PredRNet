@@ -21,7 +21,6 @@ class CLEVR_MATRIX(Dataset):
         self.data_split = data_split
         self.image_size = image_size
         self.transform = transform
-        self.permute = (data_split == "train")
 
         if subset == 'None':
             subsets = os.listdir(self.dataset_dir)
@@ -42,8 +41,6 @@ class CLEVR_MATRIX(Dataset):
 
         data_path = os.path.join(self.dataset_dir, data_file)
         data = np.load(data_path)
-        # print(data["image"].size())
-        # image = np.transpose(data["image"], axes=(0,3,1,2)).reshape(16, 3, 240, 320)
         image = data["image"]
         if self.image_size != 240 or self.image_size != 320:
             resize_image = np.zeros((16, self.image_size, self.image_size, 3))
@@ -62,7 +59,6 @@ class CLEVR_MATRIX(Dataset):
 
         # Get additional data
         target = data["target"]
-        # print(target)
         meta_target = torch.tensor(0)
         structure = torch.tensor(0)
         structure_encoded = torch.tensor(0)
@@ -72,15 +68,6 @@ class CLEVR_MATRIX(Dataset):
             image = torch.from_numpy(image).type(torch.float32)         
             image = self.transform(image)
 
-
-        if self.permute:
-            new_target = random.choice(range(8))
-            if new_target != target:
-                image[[8 + new_target, 8 + target]] = image[[8 + target, 8 + new_target]]
-                target = new_target
-
         target = torch.tensor(target, dtype=torch.long)
 
         return image, target, meta_target, structure_encoded, data_file
-
-    

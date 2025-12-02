@@ -28,12 +28,13 @@ def convert_to_rpm_matrix_v6(input, b, h, w):
     return output
 
 
-def ConvNormAct(
-        inplanes, ouplanes, kernel_size=3, 
-        padding=0, stride=1, activate=True
-    ):
+def ConvNormAct(inplanes, ouplanes, kernel_size=3, padding=0, stride=1, activate=True):
 
-    block = [nn.Conv2d(inplanes, ouplanes, kernel_size, padding=padding, bias=False, stride=stride)]
+    block = [nn.Conv2d(
+        inplanes, ouplanes, kernel_size, 
+        padding=padding, bias=False, 
+        stride=stride)
+    ]
     block += [nn.BatchNorm2d(ouplanes)]
     if activate:
         block += [nn.ReLU()]

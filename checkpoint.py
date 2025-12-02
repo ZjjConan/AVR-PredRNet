@@ -9,8 +9,6 @@ def save_checkpoint(state, is_best, epoch, save_path='./'):
         shutil.copyfile(os.path.join(save_path, 'checkpoint.pth.tar'), 
                         os.path.join(save_path, 'model_best.pth.tar'))
     
-
-
 def load_checkpoint(args, model, optimizer=None, verbose=True):
 
     checkpoint = torch.load(args.resume)

@@ -18,8 +18,8 @@ sub_folders = {'0': "center_single",
 
 class RAVEN(Dataset):
     def __init__(
-        self, dataset_dir, data_split=None, image_size=80, 
-        transform=None, subset="None"
+        self, dataset_dir, data_split=None, 
+        image_size=80, transform=None, subset="None"
     ):
         self.dataset_dir = dataset_dir
         self.data_split = data_split
@@ -36,7 +36,6 @@ class RAVEN(Dataset):
             file_names = [os.path.basename(f) for f in glob.glob(os.path.join(self.dataset_dir, i, "*_" + self.data_split + ".npz"))]
             self.file_names += [os.path.join(i, f) for f in file_names]
 
-
     def __len__(self):
         return len(self.file_names)
 
@@ -46,7 +45,10 @@ class RAVEN(Dataset):
         data_path = os.path.join(self.dataset_dir, data_file)
         data = np.load(data_path)
 
-        image = data["image"].reshape(16, 160, 160)
+        if data["image"].shape[0] != 16:
+            image = data["image"].reshape(16, 160, 160)
+        else:
+            image = data["image"]
         if self.image_size != 160:
             resize_image = np.zeros((16, self.image_size, self.image_size))
             for idx in range(0, 16):

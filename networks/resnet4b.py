@@ -2,23 +2,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .network_utils import (
-    ResBlock, ConvNormAct, convert_to_rpm_matrix_v9, Classifier
-)
+from .network_utils import ResBlock, ConvNormAct, convert_to_rpm_matrix_v9, Classifier
 
 
 class ResNet(nn.Module):
 
-    def __init__(
-        self, 
-        num_filters=32, 
-        block_drop=0.0, 
-        classifier_drop=0.0, 
-        classifier_hidreduce=1.0,
-        in_channels=1,
-        num_classes=1,
-        num_extra_stages=1
-    ):
+    def __init__(self, num_filters=32, block_drop=0.0, classifier_drop=0.0, 
+                 classifier_hidreduce=1.0, in_channels=1, num_classes=1, 
+                 num_extra_stages=1):
         super().__init__()
 
         channels = [num_filters, num_filters*2, num_filters*3, num_filters*4]
@@ -65,16 +56,6 @@ class ResNet(nn.Module):
 
         self.in_channels = in_channels
         self.ou_channels = 8
-
-
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='leaky_relu')
-            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
-                if m.weight is not None:
-                    nn.init.constant_(m.weight, 1)
-                if m.bias is not None:
-                    nn.init.constant_(m.bias, 0)
 
 
     def _make_layer(self, planes, stride, block, dropout):
